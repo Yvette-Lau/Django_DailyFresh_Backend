@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<script type="text/javascript">
+	$(function () {
+	    //向购物车中添加商品
+		  $('.goods_type_list li .add_goods').each(function(){
+			$(this).click(
+				function(){
+				    var id=$(this).prev('.unit').attr('id');
+				    // alert(id);
+					$.get('/cart/add' + id + '_' + '1' + '/', function (data) {
+					 $('.goods_count').text(data.count);
+					//alert(data.count)
+			 		});
+				});
+		  });
+    });
+</script>
+{% endblock head %}
+
+{% block content1 %}
+
+	<div class="breadcrumb">
+		<a href="/goods/">全部分类</a>
+		<span>></span>
+		<a href="/goods/list{{ typeinfo.id }}_1_1">{{ title }}</a>
+
+	</div>
+
+	<div class="main_wrap clearfix">
+		<div class="l_wrap fl clearfix">
+			<div class="new_goods">
+				<h3>新品推荐</h3>
+				<ul>
+                    {% for new in news %}
+                    <li>
+						<a href="/goods/{{ new.id }}/"><img src="/static/{{ new.gpic }}"></a>
+						<h4><a href="/{{ new.id }}/">{{ new.gtitle }}</a></h4>
+						<div class="prize">￥{{ new.gprice }}</div>
+					</li>
+                    {% endfor %}
+				</ul>
+			</div>
+		</div>
+
+		<div class="r_wrap fr clearfix">
+			<div class="sort_bar">
+				<a href="/goods/list{{ typeinfo.id }}_1_1/" {% if sort == "1" %}class="active" {% endif %}>默认</a>
+				<a href="/goods/list{{ typeinfo.id }}_1_2/" {% if sort == "2" %}class="active" {% endif %}>价格</a>
+				<a href="/goods/list{{ typeinfo.id }}_1_3/" {% if sort == "3" %}class="active" {% endif %}>人气</a>
+			</div>
+
+			<ul class="goods_type_list clearfix">
+                {% for g in page %}
+                <li>
+                    <a href="/goods/{{ g.id }}"><img src="/static/{{ g.gpic }}"></a>
+                    <h4><a href="/goods/{{ g.id }}">{{ g.gtitle }}</a></h4>
+                    <div class="operate">
+                        <span class="prize">￥{{ g.gprice }}</span>
+                        <span class="unit" id="{{ g.id }}">{{ g.gprice }}/{{ g.gunit }}</span>
+                        <a href="javascript:;" class="add_goods" title="加入购物车"></a>
+                    </div>
+				</li>
+                {% endfor %}
+			</ul>
+
+			<div class="pagenation">
+                {% if page.has_previous %}
+				<a href="/goods/list{{ typeinfo.id }}_{{ page.previous_page_number }}_{{ sort }}/">上一页</a>
+                {% endif %}
+
+
+                {% for pageid in paginator.page_range %}
+                    {% if pageid == page.number %}
+                    <a href="#" class="active">{{ pageid }}</a>
+                    {% else %}
+				    <a href="/goods/list{{ typeinfo.id }}_{{ pageid }}_{{ sort }}/">{{ pageid }}</a>
+                    {% endif %}
+                {% endfor %}
+
+
+                {% if page.has_next%}
+                <a href="/goods/list{{ typeinfo.id }}_{{ page.next_page_number }}_{{ sort }}/">下一页></a>
+                {% endif %}
+
+			</div>
+		</div>
+	</div>
+
+{% endblock content1 %}
+
